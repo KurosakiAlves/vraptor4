@@ -47,8 +47,6 @@ import br.com.caelum.vraptor.interceptor.ApplicationLogicException;
 import br.com.caelum.vraptor.ioc.RequestStartedFactory;
 import br.com.caelum.vraptor.ioc.cdi.CDIRequestFactories;
 import javax.servlet.AsyncContext;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
 
 /**
  * VRaptor entry point.<br>
