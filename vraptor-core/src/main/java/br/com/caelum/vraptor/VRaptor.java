@@ -61,6 +61,7 @@ import javax.servlet.AsyncContext;
 }, asyncSupported = true)
 public class VRaptor implements Filter
 {
+
     public static final String VERSION = "4.2.0-RC3-SNAPSHOT";
 
     private final Logger logger = getLogger(VRaptor.class);
@@ -122,13 +123,14 @@ public class VRaptor implements Filter
         if (!baseRequest.isAsyncSupported())
         {
             fireEvents(baseRequest, baseResponse, chain);
-            return;
         }
-
-        startAsync(baseRequest, baseResponse, chain);
+        else
+        {
+            configAsync(baseRequest, baseResponse, chain);
+        }
     }
 
-    private void startAsync(final HttpServletRequest baseRequest, final HttpServletResponse baseResponse, final FilterChain chain) throws IllegalStateException
+    private void configAsync(final HttpServletRequest baseRequest, final HttpServletResponse baseResponse, final FilterChain chain) throws IllegalStateException
     {
         final AsyncContext async = !baseRequest.isAsyncStarted()
                                    ? baseRequest.startAsync(baseRequest, baseResponse)
@@ -136,26 +138,7 @@ public class VRaptor implements Filter
 
         VRaptorAsyncListener listener = new VRaptorAsyncListener(logger);
         async.addListener(listener);
-        
-        async.start(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    fireEvents(baseRequest, baseResponse, chain);
-                    async.complete();
-                }
-                catch (ApplicationLogicException e)
-                {
-                    async.dispatch(servletContext, servletContext.getContextPath());
-                    // it is a business logic exception, we dont need to show
-                    // all interceptors stack trace
-                    throw new RuntimeException(e.getMessage(), e.getCause());
-                }
-            }
-        });
+        fireEvents(baseRequest, baseResponse, chain);
     }
 
     private void fireEvents(final HttpServletRequest baseRequest, final HttpServletResponse baseResponse, final FilterChain chain)
