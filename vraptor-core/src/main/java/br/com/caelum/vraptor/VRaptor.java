@@ -120,14 +120,12 @@ public class VRaptor implements Filter
             return;
         }
 
-        if (!baseRequest.isAsyncSupported())
-        {
-            fireEvents(baseRequest, baseResponse, chain);
-        }
-        else
+        if (baseRequest.isAsyncSupported())
         {
             configAsync(baseRequest, baseResponse, chain);
         }
+        
+        fireEvents(baseRequest, baseResponse, chain);
     }
 
     private void configAsync(final HttpServletRequest baseRequest, final HttpServletResponse baseResponse, final FilterChain chain) throws IllegalStateException
@@ -136,8 +134,7 @@ public class VRaptor implements Filter
                                    ? baseRequest.startAsync(baseRequest, baseResponse)
                                    : baseRequest.getAsyncContext();
 
-        VRaptorAsyncListener listener = new VRaptorAsyncListener(logger);
-        async.addListener(listener);
+        async.addListener(new VRaptorAsyncListener(logger));
         fireEvents(baseRequest, baseResponse, chain);
     }
 

@@ -31,7 +31,7 @@ public class ServletContextFactory{
 
 	private ServletContext context;
 
-	public void observesContext(@Observes @Initialized(ApplicationScoped.class) ServletContext context){
+	public void observesContext(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
 		this.context = context;
 	}
 
