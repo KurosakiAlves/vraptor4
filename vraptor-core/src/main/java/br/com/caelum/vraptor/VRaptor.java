@@ -124,7 +124,7 @@ public class VRaptor implements Filter
         {
             configAsync(baseRequest, baseResponse, chain);
         }
-        
+
         fireEvents(baseRequest, baseResponse, chain);
     }
 
@@ -135,15 +135,23 @@ public class VRaptor implements Filter
                                    : baseRequest.getAsyncContext();
 
         async.addListener(new VRaptorAsyncListener(logger));
-        fireEvents(baseRequest, baseResponse, chain);
     }
 
-    private void fireEvents(final HttpServletRequest baseRequest, final HttpServletResponse baseResponse, final FilterChain chain)
+    private void fireEvents(final HttpServletRequest baseRequest, final HttpServletResponse baseResponse, final FilterChain chain) throws ServletException
     {
-        encodingHandler.setEncoding(baseRequest, baseResponse);
-        RequestStarted requestStarted = requestStartedFactory.createEvent(baseRequest, baseResponse, chain);
-        cdiRequestFactories.setRequest(requestStarted);
-        requestStartedEvent.fire(requestStarted);
+        try
+        {
+            encodingHandler.setEncoding(baseRequest, baseResponse);
+            RequestStarted requestStarted = requestStartedFactory.createEvent(baseRequest, baseResponse, chain);
+            cdiRequestFactories.setRequest(requestStarted);
+            requestStartedEvent.fire(requestStarted);
+        }
+        catch (ApplicationLogicException e)
+        {
+            // it is a business logic exception, we dont need to show
+            // all interceptors stack trace
+            throw new ServletException(e.getMessage(), e.getCause());
+        }
     }
 
     @Override
