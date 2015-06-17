@@ -39,7 +39,7 @@ public class VRaptorAsyncListener implements AsyncListener
     @Override
     public void onComplete(AsyncEvent event) throws IOException
     {
-        logger.debug("VRaptor ended the request");
+        logger.debug("VRaptor ended async request");
     }
 
     @Override
@@ -60,6 +60,6 @@ public class VRaptorAsyncListener implements AsyncListener
     public void onStartAsync(AsyncEvent event) throws IOException
     {
         ServletRequest req = event.getSuppliedRequest();
-        logger.trace("VRaptor received a new request {}", req);
+        logger.trace("VRaptor received a new async request {}", req);
     }
 }

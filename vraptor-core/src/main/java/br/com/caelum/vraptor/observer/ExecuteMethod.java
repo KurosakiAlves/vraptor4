@@ -24,6 +24,7 @@ import br.com.caelum.vraptor.core.Try;
 import br.com.caelum.vraptor.events.InterceptorsExecuted;
 import br.com.caelum.vraptor.events.MethodExecuted;
 import br.com.caelum.vraptor.events.MethodReady;
+import br.com.caelum.vraptor.http.VRaptorRequest;
 import br.com.caelum.vraptor.validator.Messages;
 import org.slf4j.Logger;
 
