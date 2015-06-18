@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import br.com.caelum.vraptor.events.RequestStarted;
 import br.com.caelum.vraptor.http.MutableRequest;
 import br.com.caelum.vraptor.http.MutableResponse;
+import javax.servlet.AsyncContext;
 
 @RequestScoped
 @Alternative
@@ -61,4 +62,10 @@ public class CDIRequestFactories {
 	public FilterChain getChain(){
 		return requestStarted.getChain();
 	}
+        
+        @Produces
+        @RequestScoped
+        public AsyncContext getAsyncContext(){
+            return requestStarted.getRequest().getAsyncContext();
+        }
 }
