@@ -1,27 +1,31 @@
-/***
- * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource
- * All rights reserved.
+/**
+ * *
+ * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- * 	http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
-
 package br.com.caelum.vraptor.events;
 
+import br.com.caelum.vraptor.VRaptorAsyncListener;
 import javax.enterprise.inject.Vetoed;
 import javax.servlet.FilterChain;
 
 import br.com.caelum.vraptor.http.MutableRequest;
 import br.com.caelum.vraptor.http.MutableResponse;
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
 
 /**
  * Simple wrapper for request, response and servlet context.
@@ -30,27 +34,32 @@ import br.com.caelum.vraptor.http.MutableResponse;
  * @author Guilherme Silveira
  */
 @Vetoed
-public class VRaptorRequestStarted implements RequestStarted {
+public class VRaptorRequestStarted implements RequestStarted
+{
 
-	private final MutableRequest request;
-	private final MutableResponse response;
-	private final FilterChain chain;
+    private final MutableRequest request;
+    private final MutableResponse response;
+    private final FilterChain chain;
 
-	public VRaptorRequestStarted(FilterChain chain, MutableRequest request, MutableResponse response) {
-		this.chain = chain;
-		this.request = request;
-		this.response = response;
-	}
+    public VRaptorRequestStarted(FilterChain chain, MutableRequest request, MutableResponse response)
+    {
+        this.chain = chain;
+        this.request = request;
+        this.response = response;
+    }
 
-	public FilterChain getChain() {
-		return chain;
-	}
+    public FilterChain getChain()
+    {
+        return chain;
+    }
 
-	public MutableRequest getRequest() {
-		return request;
-	}
+    public MutableRequest getRequest()
+    {
+        return request;
+    }
 
-	public MutableResponse getResponse() {
-		return response;
-	}
+    public MutableResponse getResponse()
+    {
+        return response;
+    }
 }

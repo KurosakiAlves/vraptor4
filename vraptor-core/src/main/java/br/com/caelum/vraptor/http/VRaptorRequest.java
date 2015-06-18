@@ -17,6 +17,7 @@
 
 package br.com.caelum.vraptor.http;
 
+import br.com.caelum.vraptor.VRaptorAsyncListener;
 import static java.util.Collections.enumeration;
 import static javax.servlet.RequestDispatcher.INCLUDE_REQUEST_URI;
 
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
+import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -102,4 +104,10 @@ public class VRaptorRequest extends HttpServletRequestWrapper implements Mutable
 	public String toString() {
 		return String.format("[VRaptorRequest %s]", this.getRequest());
 	}
+        
+        public AsyncContext getAsync(){
+            final AsyncContext async = !isAsyncStarted()? startAsync() : getAsyncContext();
+            async.addListener(new VRaptorAsyncListener(logger));
+            return async;
+        }
 }

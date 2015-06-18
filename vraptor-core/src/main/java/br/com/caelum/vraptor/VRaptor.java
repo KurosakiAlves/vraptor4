@@ -62,7 +62,6 @@ public class VRaptor implements Filter {
 
 	private final Logger logger = getLogger(VRaptor.class);
 
-
 	private ServletContext servletContext;
 
 	@Inject

@@ -1,4 +1,5 @@
-/***
+/**
+ * *
  * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -26,46 +27,48 @@ import javax.servlet.http.HttpSession;
 import br.com.caelum.vraptor.events.RequestStarted;
 import br.com.caelum.vraptor.http.MutableRequest;
 import br.com.caelum.vraptor.http.MutableResponse;
-import javax.servlet.AsyncContext;
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @RequestScoped
 @Alternative
 @Priority(Interceptor.Priority.LIBRARY_BEFORE)
-public class CDIRequestFactories {
+public class CDIRequestFactories
+{
 
-	private RequestStarted requestStarted;
+    private RequestStarted requestStarted;
+    private final Logger logger = getLogger(CDIRequestFactories.class);
 
-	public void setRequest(RequestStarted requestStarted) {
-		this.requestStarted = requestStarted;
-	}
+    public void setRequest(RequestStarted requestStarted)
+    {
+        this.requestStarted = requestStarted;
+    }
 
-	@Produces
-	@RequestScoped
-	public HttpSession getSession(){
-		return requestStarted.getRequest().getSession();
-	}
+    @Produces
+    @RequestScoped
+    public HttpSession getSession()
+    {
+        return requestStarted.getRequest().getSession();
+    }
 
-	@Produces
-	@RequestScoped
-	public MutableResponse getResponse(){
-		return requestStarted.getResponse();
-	}
+    @Produces
+    @RequestScoped
+    public MutableResponse getResponse()
+    {
+        return requestStarted.getResponse();
+    }
 
-	@Produces
-	@RequestScoped
-	public MutableRequest getRequest(){
-		return requestStarted.getRequest();
-	}
-        
-	@Produces
-	@RequestScoped
-	public FilterChain getChain(){
-		return requestStarted.getChain();
-	}
-        
-        @Produces
-        @RequestScoped
-        public AsyncContext getAsyncContext(){
-            return requestStarted.getRequest().getAsyncContext();
-        }
+    @Produces
+    @RequestScoped
+    public MutableRequest getRequest()
+    {
+        return requestStarted.getRequest();
+    }
+
+    @Produces
+    @RequestScoped
+    public FilterChain getChain()
+    {
+        return requestStarted.getChain();
+    }
 }

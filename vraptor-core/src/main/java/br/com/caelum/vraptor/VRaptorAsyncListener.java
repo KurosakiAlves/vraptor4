@@ -39,7 +39,7 @@ public class VRaptorAsyncListener implements AsyncListener
     @Override
     public void onComplete(AsyncEvent event) throws IOException
     {
-        logger.debug("VRaptor ended async request");
+        logger.debug("VRaptor completed async request");
     }
 
     @Override

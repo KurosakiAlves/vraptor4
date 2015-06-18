@@ -26,7 +26,6 @@ import br.com.caelum.vraptor.events.RequestStarted;
 import br.com.caelum.vraptor.events.VRaptorRequestStarted;
 import br.com.caelum.vraptor.http.VRaptorRequest;
 import br.com.caelum.vraptor.http.VRaptorResponse;
-import javax.servlet.AsyncContext;
 import org.slf4j.Logger;
 
 /**
@@ -37,26 +36,10 @@ import org.slf4j.Logger;
 @ApplicationScoped
 public class RequestStartedFactory
 {
-
     public RequestStarted createEvent(HttpServletRequest baseRequest, HttpServletResponse baseResponse, FilterChain chain, Logger logger)
     {
-        if (baseRequest.isAsyncSupported())
-        {
-            configAsync(baseRequest, baseResponse, logger);
-        }
-
         VRaptorRequest mutableRequest = new VRaptorRequest(baseRequest);
         VRaptorResponse mutableResponse = new VRaptorResponse(baseResponse);
-
         return new VRaptorRequestStarted(chain, mutableRequest, mutableResponse);
-    }
-
-    private void configAsync(HttpServletRequest baseRequest, HttpServletResponse baseResponse, Logger logger)
-    {
-        final AsyncContext async = !baseRequest.isAsyncStarted()
-                                   ? baseRequest.startAsync(baseRequest, baseResponse)
-                                   : baseRequest.getAsyncContext();
-
-        async.addListener(new VRaptorAsyncListener(logger));
     }
 }
