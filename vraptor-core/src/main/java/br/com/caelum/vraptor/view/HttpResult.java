@@ -22,6 +22,8 @@ import java.io.Reader;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.View;
+import java.util.Queue;
+import javax.servlet.AsyncContext;
 
 /**
  * A view that deals with HTTP protocol, sending status and error codes
@@ -47,6 +49,8 @@ public interface HttpResult extends View {
 	HttpResult addDateHeader(String name, long date);
 
 	HttpResult body(String body);
+        
+        HttpResult body(String body, AsyncContext async);
 
 	HttpResult body(InputStream body);
 

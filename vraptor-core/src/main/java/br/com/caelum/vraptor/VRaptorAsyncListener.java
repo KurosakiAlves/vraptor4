@@ -46,7 +46,7 @@ public class VRaptorAsyncListener implements AsyncListener
     public void onTimeout(AsyncEvent event) throws IOException
     {
         long timeout = event.getAsyncContext().getTimeout();
-        logger.trace("VRaptor ended in timeout {} ", timeout);
+        logger.debug("VRaptor ended in timeout {} ", timeout);
     }
 
     @Override
@@ -60,6 +60,6 @@ public class VRaptorAsyncListener implements AsyncListener
     public void onStartAsync(AsyncEvent event) throws IOException
     {
         ServletRequest req = event.getSuppliedRequest();
-        logger.trace("VRaptor received a new async request {}", req);
+        logger.debug("VRaptor received a new async request {}", req);
     }
 }

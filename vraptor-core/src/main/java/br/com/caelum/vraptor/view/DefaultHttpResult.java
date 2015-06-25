@@ -29,6 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import java.util.Queue;
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 /**
  * Implementation that delegates to HttpServletResponse
@@ -109,6 +113,35 @@ public class DefaultHttpResult implements HttpResult {
 	public HttpResult body(String body) {
 		try {
 			response.getWriter().print(body);
+		} catch (IOException e) {
+			throw new ResultException("Couldn't write to response body", e);
+		}
+		return this;
+	}
+        
+        @Override
+	public HttpResult body(final String body, final AsyncContext async) {
+		try {
+                    final ServletOutputStream output = response.getOutputStream();
+                    output.setWriteListener(new WriteListener()
+                    {
+                        @Override
+                        public void onWritePossible() throws IOException
+                        {
+                            if (output.isReady())
+                            {
+                                output.print(body);
+                                async.complete();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable error)
+                        {
+                            error.printStackTrace();
+                            async.complete();
+                        }
+                    });
 		} catch (IOException e) {
 			throw new ResultException("Couldn't write to response body", e);
 		}
