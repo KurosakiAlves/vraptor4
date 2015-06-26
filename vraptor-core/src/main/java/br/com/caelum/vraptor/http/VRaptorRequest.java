@@ -17,6 +17,7 @@
 
 package br.com.caelum.vraptor.http;
 
+import br.com.caelum.vraptor.view.HttpResult;
 import static java.util.Collections.enumeration;
 import static javax.servlet.RequestDispatcher.INCLUDE_REQUEST_URI;
 
@@ -108,4 +109,9 @@ public class VRaptorRequest extends HttpServletRequestWrapper implements Mutable
             final AsyncContext async = !isAsyncStarted()? startAsync() : getAsyncContext();
             return async;
         }
+
+    public void initAsyncReading(HttpResult body)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

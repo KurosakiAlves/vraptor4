@@ -31,7 +31,6 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 
 /**
  * Implementation that delegates to HttpServletResponse
@@ -43,6 +42,7 @@ import javax.servlet.WriteListener;
 public class DefaultHttpResult implements HttpResult
 {
 
+    private static final int BUFFER_SIZE = 4096;
     private final HttpServletResponse response;
     private final Status status;
 
@@ -145,8 +145,16 @@ public class DefaultHttpResult implements HttpResult
     {
         try
         {
-            final ServletOutputStream output = response.getOutputStream();
-            output.setWriteListener(new StringAsyncWriteListener(output, async, body));
+            ServletOutputStream output = response.getOutputStream();
+            output.setWriteListener(new TemplateAsyncWriteListener(output, async)
+            {
+                @Override
+                public boolean finished() throws IOException
+                {
+                    output.print(body);
+                    return true;
+                }
+            });
         }
         catch (IOException e)
         {
@@ -160,9 +168,22 @@ public class DefaultHttpResult implements HttpResult
     {
         try
         {
-            final ServletOutputStream output = response.getOutputStream();
-            final byte[] buffer = new byte[4024];
-            output.setWriteListener(new StreamAsyncWriteListener(output, async, body, buffer));
+            ServletOutputStream output = response.getOutputStream();
+            final byte[] buffer = new byte[BUFFER_SIZE];
+            output.setWriteListener(new TemplateAsyncWriteListener(output, async)
+            {
+                @Override
+                public boolean finished() throws IOException
+                {
+                    int dataRead = body.read(buffer);
+                    if (-1 == dataRead)
+                    {
+                        return true;
+                    }
+                    output.write(buffer);
+                    return false;
+                }
+            });
         }
         catch (IOException e)
         {
@@ -197,48 +218,5 @@ public class DefaultHttpResult implements HttpResult
             throw new ResultException("Couldn't write to response body", e);
         }
         return this;
-    }
-
-    private static class StreamAsyncWriteListener extends TemplateAsyncWriteListener
-    {
-        private final InputStream body;
-        private final byte[] buffer;
-
-        public StreamAsyncWriteListener(ServletOutputStream output, AsyncContext async, InputStream body, byte[] buffer)
-        {
-            super(output, async);
-            this.body = body;
-            this.buffer = buffer;
-        }
-
-        @Override
-        public boolean finished() throws IOException
-        {
-            int dataRead = body.read(buffer);
-            if (-1 == dataRead)
-            {
-                return true;
-            }
-            output.write(buffer);
-            return false;
-        }
-    }
-
-    private static class StringAsyncWriteListener extends TemplateAsyncWriteListener
-    {
-        private final String body;
-
-        public StringAsyncWriteListener(ServletOutputStream output, AsyncContext async, String body)
-        {
-            super(output, async);
-            this.body = body;
-        }
-
-        @Override
-        public boolean finished() throws IOException
-        {
-            output.print(body);
-            return true;
-        }
     }
 }
