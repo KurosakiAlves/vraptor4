@@ -49,16 +49,13 @@ public abstract class TemplateAsyncWriteListener implements WriteListener, VRapt
         }
     }
     
+    /**
+     * Async code must not throws errors.
+     * @param e Throwable
+     */
     @Override
     public void onError(Throwable e)
     {
-        try
-        {
-            throw new ResultException("Couldn't write to response body", e);
-        }
-        finally
-        {
-            async.complete();
-        }
+        async.complete();
     }
 }

@@ -23,6 +23,7 @@ import javax.servlet.ServletInputStream;
 
 /**
  * Template for ReadListener
+ *
  * @author Guilherme Alves.
  */
 public abstract class TemplateAsyncReadListener implements ReadListener, VRaptorAsyncLogicExecutedListener
@@ -58,17 +59,14 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
     }
 
     public abstract void executeLogic();
-
+    
+    /**
+     * Async code must not throws errors.
+     * @param e Throwable
+     */
     @Override
     public void onError(Throwable e)
     {
-        try
-        {
-            throw new ResultException("Couldn't write to response body", e);
-        }
-        finally
-        {
-            async.complete();
-        }
+        async.complete();
     }
 }
