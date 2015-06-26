@@ -40,12 +40,13 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
     @Override
     public void onDataAvailable() throws IOException
     {
+        //The two methods must be called in that order to work properly
         while (input.isReady() && !input.isFinished())
         {
             if (finished())
             {
                 async.complete();
-                return;
+                break;
             }
         }
     }
