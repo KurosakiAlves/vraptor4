@@ -35,9 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A request capable of adding new parameters.
- *
  * @author guilherme silveira
- *
  */
 @Vetoed
 public class VRaptorRequest extends HttpServletRequestWrapper implements MutableRequest {
@@ -109,9 +107,4 @@ public class VRaptorRequest extends HttpServletRequestWrapper implements Mutable
             final AsyncContext async = !isAsyncStarted()? startAsync() : getAsyncContext();
             return async;
         }
-
-    public void initAsyncReading(HttpResult body)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
