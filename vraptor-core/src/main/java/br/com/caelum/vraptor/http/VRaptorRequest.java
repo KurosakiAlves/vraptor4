@@ -125,10 +125,8 @@ public class VRaptorRequest extends HttpServletRequestWrapper implements Mutable
         return async;
     }
 
-    public void beginAsyncRead(TemplateAsyncReadListener asyncReadListener) throws IOException
+    public void beginAsyncRead(TemplateAsyncReadListener asyncListener) throws IOException
     {
-        ServletInputStream input = getInputStream();
-        asyncReadListener.setAsync(getReadyAsync()).setInput(input);
-        input.setReadListener(asyncReadListener);
+        asyncListener.setAsync(getReadyAsync()).setInput(getInputStream());
     }
 }

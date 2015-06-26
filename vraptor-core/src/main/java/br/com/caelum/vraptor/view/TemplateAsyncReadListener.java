@@ -38,8 +38,8 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
 
     public TemplateAsyncReadListener(ServletInputStream input, AsyncContext async)
     {
-        this.input = input;
-        this.async = async;
+        setInput(input).
+        setAsync(async);
     }
 
     public ServletInputStream getInput()
@@ -51,6 +51,7 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
     {
         Objects.requireNonNull(async, "The ServletInputStream must not be null!");
         this.input = input;
+        input.setReadListener(this);
         return this;
     }
 
