@@ -149,7 +149,7 @@ public class DefaultHttpResult implements HttpResult
             output.setWriteListener(new TemplateAsyncWriteListener(output, async)
             {
                 @Override
-                public boolean finished() throws IOException
+                public boolean isFinished() throws IOException
                 {
                     output.print(body);
                     return true;
@@ -164,24 +164,18 @@ public class DefaultHttpResult implements HttpResult
     }
 
     @Override
-    public HttpResult body(final InputStream body, final AsyncContext async)
+    public HttpResult body(final byte[] buffer, final AsyncContext async)
     {
         try
         {
             ServletOutputStream output = response.getOutputStream();
-            final byte[] buffer = new byte[BUFFER_SIZE];
             output.setWriteListener(new TemplateAsyncWriteListener(output, async)
             {
                 @Override
-                public boolean finished() throws IOException
+                public boolean isFinished() throws IOException
                 {
-                    int dataRead = body.read(buffer);
-                    if (-1 == dataRead)
-                    {
-                        return true;
-                    }
                     output.write(buffer);
-                    return false;
+                    return true;
                 }
             });
         }

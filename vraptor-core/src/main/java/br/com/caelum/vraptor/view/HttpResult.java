@@ -49,9 +49,23 @@ public interface HttpResult extends View {
 
 	HttpResult body(String body);
         
+        /**
+         * The method must do non-blocking
+         * writing.
+         * @param body
+         * @param async AsyncContext
+         * @return 
+         */
         HttpResult body(String body, AsyncContext async);
-
-        HttpResult body(InputStream body, AsyncContext async);
+        
+        /**
+         * The method must do non-blocking
+         * writing.
+         * @param buffer
+         * @param async AsyncContext
+         * @return 
+         */
+        HttpResult body(byte[] buffer, AsyncContext async);
 	
         HttpResult body(InputStream body);
 

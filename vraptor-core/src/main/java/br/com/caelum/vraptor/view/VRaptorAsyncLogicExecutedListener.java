@@ -10,8 +10,8 @@ public interface VRaptorAsyncLogicExecutedListener
 {
     /**
      * Classes that reads\writes in an async way must implement this.
-     * @return true if the method was finished or false otherwise.
+     * @return true if the method was isFinished or false otherwise.
      * @throws java.io.IOException
      */
-    boolean finished() throws IOException;
+    boolean isFinished() throws IOException;
 }
