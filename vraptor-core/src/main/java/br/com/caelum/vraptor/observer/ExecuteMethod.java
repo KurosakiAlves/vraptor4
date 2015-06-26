@@ -80,7 +80,7 @@ public class ExecuteMethod {
 				log.debug("Invoking {}", reflectionMethod);
 				Object instance = event.getControllerInstance();
 				Object result = reflectionProvider.invoke(instance, reflectionMethod, parameters);
-
+                                
 				messages.assertAbsenceOfErrors();
 
 				methodInfo.setResult(result);

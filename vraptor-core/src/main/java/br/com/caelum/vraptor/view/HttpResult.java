@@ -22,7 +22,6 @@ import java.io.Reader;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.View;
-import java.util.Queue;
 import javax.servlet.AsyncContext;
 
 /**
@@ -52,7 +51,9 @@ public interface HttpResult extends View {
         
         HttpResult body(String body, AsyncContext async);
 
-	HttpResult body(InputStream body);
+        HttpResult body(InputStream body, AsyncContext async);
+	
+        HttpResult body(InputStream body);
 
 	HttpResult body(Reader body);
 
