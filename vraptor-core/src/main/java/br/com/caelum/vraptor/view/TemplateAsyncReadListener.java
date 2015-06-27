@@ -68,6 +68,17 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
         return this;
     }
 
+    /**
+     * Override if it's necessary to read a file.
+     * @return boolean
+     * @throws IOException 
+     */
+    @Override
+    public boolean isFinished() throws IOException
+    {
+        return true;
+    }
+    
     @Override
     public void onDataAvailable() throws IOException
     {

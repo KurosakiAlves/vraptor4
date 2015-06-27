@@ -29,8 +29,6 @@ public interface Serialization extends NoRootSerialization {
 	 */
     	<T> Serializer from(T object, String alias);
         
-        <T> Serializer from(T object, boolean useAsync);
-        
         <T> Serializer from(T object, String alias, boolean useAsync);
         
 	boolean accepts(String format);

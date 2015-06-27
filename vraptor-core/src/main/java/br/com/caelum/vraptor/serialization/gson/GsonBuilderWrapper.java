@@ -43,10 +43,10 @@ import com.google.gson.JsonSerializer;
 @Dependent
 public class GsonBuilderWrapper implements GsonSerializerBuilder, GsonDeserializerBuilder {
 	
-	private GsonBuilder builder = new GsonBuilder();
+	private final GsonBuilder builder = new GsonBuilder();
 	private boolean withoutRoot;
 	private String alias;
-	private List<ExclusionStrategy> exclusions;
+	private final List<ExclusionStrategy> exclusions;
 	
 	private final Serializee serializee;
 	private final Iterable<JsonSerializer<?>> jsonSerializers;
@@ -74,18 +74,18 @@ public class GsonBuilderWrapper implements GsonSerializerBuilder, GsonDeserializ
 		}
 		
 		for (ExclusionStrategy exclusion : exclusions) {
-			getGsonBuilder().addSerializationExclusionStrategy(exclusion);
+			builder.addSerializationExclusionStrategy(exclusion);
 		}
 		
-		return getGsonBuilder().create();
+		return builder.create();
 	}
 	
 	private void registerAdapter(Class<?> adapterType, Object adapter) {
 		RegisterStrategy registerStrategy = adapter.getClass().getAnnotation(RegisterStrategy.class);
 		if ((registerStrategy != null) && (registerStrategy.value().equals(RegisterType.SINGLE))) {
-			getGsonBuilder().registerTypeAdapter(adapterType, adapter);
+			builder.registerTypeAdapter(adapterType, adapter);
 		} else {
-			getGsonBuilder().registerTypeHierarchyAdapter(adapterType, adapter);
+			builder.registerTypeHierarchyAdapter(adapterType, adapter);
 		}	
 	}
 	
@@ -128,12 +128,12 @@ public class GsonBuilderWrapper implements GsonSerializerBuilder, GsonDeserializ
 
 	@Override
 	public void indented() {
-		getGsonBuilder().setPrettyPrinting();
+		builder.setPrettyPrinting();
 	}
 
 	@Override
 	public void setExclusionStrategies(ExclusionStrategy... strategies) {
-		getGsonBuilder().setExclusionStrategies(strategies);
+		builder.setExclusionStrategies(strategies);
 	}
 
 	protected GsonBuilder getGsonBuilder() {
@@ -142,12 +142,12 @@ public class GsonBuilderWrapper implements GsonSerializerBuilder, GsonDeserializ
 
 	@Override
 	public void version(double versionNumber) {
-		getGsonBuilder().setVersion(versionNumber);
+		builder.setVersion(versionNumber);
 	}
 
 	@Override
 	public void serializeNulls() {
-		getGsonBuilder().serializeNulls();
+		builder.serializeNulls();
 	}
 
 }

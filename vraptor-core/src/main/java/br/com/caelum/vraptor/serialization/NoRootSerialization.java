@@ -29,5 +29,7 @@ public interface NoRootSerialization extends View {
 	/**
 	 * Serializes this object to the clients writer with out ROOT alias.
 	 */
-	public <T> Serializer from(T object);
+	<T> Serializer from(T object);
+        
+        <T> Serializer from(T object, boolean useAsync);
 }

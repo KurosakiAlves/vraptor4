@@ -31,7 +31,18 @@ public abstract class TemplateAsyncWriteListener implements WriteListener, VRapt
 {
     protected final ServletOutputStream output;
     protected final AsyncContext async;
+    private boolean mustWriteOnce = false;
 
+    public boolean isMustWriteOnce()
+    {
+        return mustWriteOnce;
+    }
+
+    public void hasToWriteOnce(boolean mustWriteOnce)
+    {
+        this.mustWriteOnce = mustWriteOnce;
+    }
+    
     public TemplateAsyncWriteListener(ServletOutputStream output, AsyncContext async)
     {
         this.output = requireNonNull(output, "The ServletInputStream must not be null!");

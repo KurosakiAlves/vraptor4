@@ -71,21 +71,10 @@ public class GsonSerializer implements SerializerBuilder
                           TypeNameExtractor extractor, ReflectionProvider reflectionProvider)
     {
         this.output = output;
-        this.writer = new OutputStreamWriter(output); // Used to do the async writing.
+        this.writer = new OutputStreamWriter(output);
         this.extractor = extractor;
         this.builder = builder;
         this.reflectionProvider = reflectionProvider;
-        this.output = output;
-    }
-
-    protected GsonSerializerBuilder getBuilder()
-    {
-        return builder;
-    }
-
-    protected ReflectionProvider getReflectionProvider()
-    {
-        return reflectionProvider;
     }
 
     @Override
@@ -205,25 +194,17 @@ public class GsonSerializer implements SerializerBuilder
     {
         requireNonNull(output, "To use asynchonous serialization you need to pass true to the method " +
                                "from(T object, boolean useAsync) or from(T object, String alias, boolean useAsync).");
-        getBuilder().setExclusionStrategies(new Exclusions(getBuilder().getSerializee(), getReflectionProvider()));
-        final Gson gson = getBuilder().create();
-        final String alias = getBuilder().getAlias();
-        final Object root = getBuilder().getSerializee().getRoot();
-
+        builder.setExclusionStrategies(new Exclusions(builder.getSerializee(), reflectionProvider));
+        final Gson gson = builder.create();
+        final String alias = builder.getAlias();
+        final Object root = builder.getSerializee().getRoot();
+        final String json = builder.isWithoutRoot() ? gson.toJson(root) : gson.toJson(singletonMap(alias, root));
         output.setWriteListener(new TemplateAsyncWriteListener(output, async)
         {
             @Override
             public boolean isFinished() throws IOException
             {
-                if (getBuilder().isWithoutRoot())
-                {
-                    gson.toJson(root, writer);
-                }
-                else
-                {
-                    gson.toJson(singletonMap(alias, root), writer);
-                }
-                flushQuietly(writer);
+                output.print(json);
                 return true;
             }
         });

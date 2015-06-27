@@ -22,8 +22,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStreamWriter;
-import javax.servlet.ServletOutputStream;
 
 import br.com.caelum.vraptor.core.ReflectionProvider;
 import br.com.caelum.vraptor.environment.Environment;
