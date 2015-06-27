@@ -40,4 +40,14 @@ public class DumbSerialization implements Serialization {
 		return false;
 	}
 
+        @Override
+        public <T> Serializer from(T object, boolean useAsync) {
+                return null;
+        }
+
+        @Override
+        public <T> Serializer from(T object, String alias, boolean useAsync) {
+                return null;
+        }
+
 }

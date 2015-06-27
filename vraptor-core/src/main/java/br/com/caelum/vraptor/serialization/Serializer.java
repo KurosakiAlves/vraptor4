@@ -15,6 +15,8 @@
  */
 package br.com.caelum.vraptor.serialization;
 
+import javax.servlet.AsyncContext;
+
 /**
  * Serializes given object, including and excluding fields.
  *
@@ -59,4 +61,10 @@ public interface Serializer {
 	 * End method for this fluent interface
 	 */
 	void serialize();
+        
+        /**
+	 * End method for this fluent interface in async way.
+         * @param async
+	 */
+        void serialize(final AsyncContext async);
 }

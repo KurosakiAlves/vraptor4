@@ -16,16 +16,11 @@
  */
 package br.com.caelum.vraptor.events;
 
-import br.com.caelum.vraptor.VRaptorAsyncListener;
 import javax.enterprise.inject.Vetoed;
 import javax.servlet.FilterChain;
 
 import br.com.caelum.vraptor.http.MutableRequest;
 import br.com.caelum.vraptor.http.MutableResponse;
-import javax.servlet.AsyncContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
 
 /**
  * Simple wrapper for request, response and servlet context.
@@ -48,16 +43,19 @@ public class VRaptorRequestStarted implements RequestStarted
         this.response = response;
     }
 
+    @Override
     public FilterChain getChain()
     {
         return chain;
     }
 
+    @Override
     public MutableRequest getRequest()
     {
         return request;
     }
 
+    @Override
     public MutableResponse getResponse()
     {
         return response;

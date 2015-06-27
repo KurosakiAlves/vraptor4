@@ -27,8 +27,11 @@ public interface Serialization extends NoRootSerialization {
 	/**
 	 * Serializes this object to the clients writer, with a given alias.
 	 */
-	public <T> Serializer from(T object, String alias);
-
-	public boolean accepts(String format);
-
+    	<T> Serializer from(T object, String alias);
+        
+        <T> Serializer from(T object, boolean useAsync);
+        
+        <T> Serializer from(T object, String alias, boolean useAsync);
+        
+	boolean accepts(String format);
 }

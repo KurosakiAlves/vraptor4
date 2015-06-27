@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 import javax.servlet.AsyncContext;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -36,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A request capable of adding new parameters.
- *
  * @author guilherme silveira
  */
 @Vetoed

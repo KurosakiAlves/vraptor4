@@ -34,6 +34,7 @@ import br.com.caelum.vraptor.serialization.SerializerBuilder;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
+import javax.servlet.AsyncContext;
 
 /**
  * A SerializerBuilder based on XStream
@@ -151,4 +152,19 @@ public class XStreamSerializer implements SerializerBuilder {
 		this.serializee.setRecursive(true);
 		return this;
 	}
+
+        @Override
+        public <T> Serializer from(T object, boolean useAsync) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public <T> Serializer from(T object, String alias, boolean useAsync) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void serialize(AsyncContext async) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
 }

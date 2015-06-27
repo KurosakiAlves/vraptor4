@@ -1,4 +1,5 @@
-/***
+/**
+ * *
  * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -40,65 +41,90 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
  * @since 3.0.2
  */
 @RequestScoped
-public class XStreamXMLSerialization implements XMLSerialization {
+public class XStreamXMLSerialization implements XMLSerialization
+{
 
-	private final HttpServletResponse response;
-	private final XStreamBuilder builder;
-	private final Environment environment;
-	private boolean indented;
+    private final HttpServletResponse response;
+    private final XStreamBuilder builder;
+    private final Environment environment;
+    private boolean indented;
 
-	/** 
-	 * @deprecated CDI eyes only
-	 */
-	protected XStreamXMLSerialization() {
-		this(null, null, null);
-	}
+    /**
+     * @deprecated CDI eyes only
+     */
+    protected XStreamXMLSerialization()
+    {
+        this(null, null, null);
+    }
 
-	@Inject
-	public XStreamXMLSerialization(HttpServletResponse response, XStreamBuilder builder, Environment environment) {
-		this.response = response;
-		this.builder = builder;
-		this.environment = environment;
-	}
+    @Inject
+    public XStreamXMLSerialization(HttpServletResponse response, XStreamBuilder builder, Environment environment)
+    {
+        this.response = response;
+        this.builder = builder;
+        this.environment = environment;
+    }
 
-	@PostConstruct
-	protected void init() {
-		indented = environment.supports(ENVIRONMENT_INDENTED_KEY);
-	}
+    @PostConstruct
+    protected void init()
+    {
+        indented = environment.supports(ENVIRONMENT_INDENTED_KEY);
+    }
 
-	@Override
-	public boolean accepts(String format) {
-		return "xml".equals(format);
-	}
-	
-	@Override
-	public XMLSerialization indented() {
-		indented = true;
-		return this;
-	}
+    @Override
+    public boolean accepts(String format)
+    {
+        return "xml".equals(format);
+    }
 
-	@Override
-	public <T> Serializer from(T object) {
-		response.setContentType("application/xml");
-		return getSerializer().from(object);
-	}
+    @Override
+    public XMLSerialization indented()
+    {
+        indented = true;
+        return this;
+    }
 
-	protected SerializerBuilder getSerializer() {
-		return new XStreamSerializer(builder.xmlInstance(), getWriter());
-	}
+    @Override
+    public <T> Serializer from(T object)
+    {
+        response.setContentType("application/xml");
+        return getSerializer().from(object);
+    }
 
-	protected HierarchicalStreamWriter getWriter() {
-		try {
-			PrintWriter writer = response.getWriter();
-			return indented ? new PrettyPrintWriter(writer) : new CompactWriter(writer);
-		} catch (IOException e) {
-			throw new ResultException("Unable to serialize data", e);
-		}
-	}
+    protected SerializerBuilder getSerializer()
+    {
+        return new XStreamSerializer(builder.xmlInstance(), getWriter());
+    }
 
-	@Override
-	public <T> Serializer from(T object, String alias) {
-		response.setContentType("application/xml");
-		return getSerializer().from(object, alias);
-	}
+    protected HierarchicalStreamWriter getWriter()
+    {
+        try
+        {
+            PrintWriter writer = response.getWriter();
+            return indented ? new PrettyPrintWriter(writer) : new CompactWriter(writer);
+        }
+        catch (IOException e)
+        {
+            throw new ResultException("Unable to serialize data", e);
+        }
+    }
+
+    @Override
+    public <T> Serializer from(T object, String alias)
+    {
+        response.setContentType("application/xml");
+        return getSerializer().from(object, alias);
+    }
+
+    @Override
+    public <T> Serializer from(T object, boolean useAsync)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public <T> Serializer from(T object, String alias, boolean useAsync)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -38,10 +38,12 @@ import br.com.caelum.vraptor.core.DefaultReflectionProvider;
 import br.com.caelum.vraptor.proxy.JavassistProxifier;
 import br.com.caelum.vraptor.proxy.Proxifier;
 import br.com.caelum.vraptor.serialization.JSONSerialization;
+import br.com.caelum.vraptor.serialization.Serializer;
 import br.com.caelum.vraptor.serialization.SerializerBuilder;
 import br.com.caelum.vraptor.util.test.MockedLogic;
 import br.com.caelum.vraptor.validator.Message;
 import br.com.caelum.vraptor.validator.ValidationException;
+import javax.servlet.AsyncContext;
 
 public class DefaultValidationViewsFactoryTest {
 
@@ -364,6 +366,20 @@ public class DefaultValidationViewsFactoryTest {
 		@Override
 		public void serialize() {
 		}
+
+                @Override
+                public <T> Serializer from(T object, boolean useAsync) {
+                        return this;
+                }
+
+                @Override
+                public <T> Serializer from(T object, String alias, boolean useAsync) {
+                        return this;
+                }
+
+                @Override
+                public void serialize(AsyncContext async) {
+                }
 	}
 
 	@Test

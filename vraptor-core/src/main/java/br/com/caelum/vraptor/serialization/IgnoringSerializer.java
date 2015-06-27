@@ -16,6 +16,7 @@
 package br.com.caelum.vraptor.serialization;
 
 import javax.enterprise.inject.Vetoed;
+import javax.servlet.AsyncContext;
 
 /**
  * Doesn't serialize anything
@@ -50,6 +51,10 @@ public class IgnoringSerializer implements SerializerBuilder {
 	public void serialize() {
 	}
 
+        @Override
+        public void serialize(AsyncContext async) {
+        }
+        
 	@Override
 	public <T> Serializer from(T object, String alias) {
 		return this;
@@ -59,4 +64,14 @@ public class IgnoringSerializer implements SerializerBuilder {
 	public Serializer excludeAll() {
 		return this;
 	}
+
+        @Override
+        public <T> Serializer from(T object, boolean useAsync) {
+                return this;
+        }
+
+        @Override
+        public <T> Serializer from(T object, String alias, boolean useAsync) {
+                return this;
+        }
 }

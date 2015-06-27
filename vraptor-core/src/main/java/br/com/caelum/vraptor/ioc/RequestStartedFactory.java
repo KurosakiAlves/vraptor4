@@ -16,7 +16,6 @@
  */
 package br.com.caelum.vraptor.ioc;
 
-import br.com.caelum.vraptor.VRaptorAsyncListener;
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;

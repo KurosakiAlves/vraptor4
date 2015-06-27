@@ -26,4 +26,6 @@ package br.com.caelum.vraptor.serialization;
 public interface SerializerBuilder extends Serializer {
 	<T> Serializer from(T object);
 	<T> Serializer from(T object, String alias);
+        <T> Serializer from(T object, boolean useAsync);
+        <T> Serializer from(T object, String alias, boolean useAsync);
 }

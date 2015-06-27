@@ -16,6 +16,8 @@
  */
 package br.com.caelum.vraptor.view;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletOutputStream;
@@ -32,10 +34,10 @@ public abstract class TemplateAsyncWriteListener implements WriteListener, VRapt
 
     public TemplateAsyncWriteListener(ServletOutputStream output, AsyncContext async)
     {
-        this.output = output;
-        this.async = async;
+        this.output = requireNonNull(output, "The ServletInputStream must not be null!");
+        this.async = requireNonNull(async, "The AsyncContext must not be null!");
     }
-
+    
     @Override
     public void onWritePossible() throws IOException
     {

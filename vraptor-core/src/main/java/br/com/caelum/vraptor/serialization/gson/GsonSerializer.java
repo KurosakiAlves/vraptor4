@@ -1,4 +1,5 @@
-/***
+/**
+ * *
  * Copyright (c) 2009 Caelum - www.caelum.com.br/opensource All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -16,7 +17,6 @@
 package br.com.caelum.vraptor.serialization.gson;
 
 import static com.google.common.io.Flushables.flushQuietly;
-import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Writer;
@@ -33,8 +33,14 @@ import br.com.caelum.vraptor.core.ReflectionProvider;
 import br.com.caelum.vraptor.interceptor.TypeNameExtractor;
 import br.com.caelum.vraptor.serialization.Serializer;
 import br.com.caelum.vraptor.serialization.SerializerBuilder;
+import br.com.caelum.vraptor.view.TemplateAsyncWriteListener;
 
 import com.google.gson.Gson;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import static java.util.Collections.singletonMap;
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletOutputStream;
 
 /**
  * A SerializerBuilder based on Gson.
@@ -43,120 +49,211 @@ import com.google.gson.Gson;
  * @author Guilherme Mangabeira
  */
 @Vetoed
-public class GsonSerializer implements SerializerBuilder {
+public class GsonSerializer implements SerializerBuilder
+{
 
-	private final GsonSerializerBuilder builder;
-	private final Writer writer;
-	private final TypeNameExtractor extractor;
-	private final ReflectionProvider reflectionProvider;
+    private final GsonSerializerBuilder builder;
+    private final Writer writer;
+    private final TypeNameExtractor extractor;
+    private final ReflectionProvider reflectionProvider;
+    private ServletOutputStream output;
 
-	public GsonSerializer(GsonSerializerBuilder builder, Writer writer, TypeNameExtractor extractor, 
-			ReflectionProvider reflectionProvider) {
-		this.writer = writer;
-		this.extractor = extractor;
-		this.builder = builder;
-		this.reflectionProvider = reflectionProvider;
-	}
+    public GsonSerializer(GsonSerializerBuilder builder, Writer writer, TypeNameExtractor extractor,
+                          ReflectionProvider reflectionProvider)
+    {
+        this.writer = writer;
+        this.extractor = extractor;
+        this.builder = builder;
+        this.reflectionProvider = reflectionProvider;
+    }
 
-	@Override
-	public Serializer exclude(String... names) {
-		builder.getSerializee().excludeAll(names);
-		return this;
-	}
+    public GsonSerializer(GsonSerializerBuilder builder, ServletOutputStream output,
+                          TypeNameExtractor extractor, ReflectionProvider reflectionProvider)
+    {
+        this.output = output;
+        this.writer = new OutputStreamWriter(output); // Used to do the async writing.
+        this.extractor = extractor;
+        this.builder = builder;
+        this.reflectionProvider = reflectionProvider;
+        this.output = output;
+    }
 
-	@Override
-	public Serializer excludeAll() {
-		builder.getSerializee().excludeAll();
-		return this;
-	}
+    protected GsonSerializerBuilder getBuilder()
+    {
+        return builder;
+    }
 
-	private void preConfigure(Object obj, String alias) {
-		requireNonNull(obj, "You can't serialize null objects");
+    protected ReflectionProvider getReflectionProvider()
+    {
+        return reflectionProvider;
+    }
 
-		builder.getSerializee().setRootClass(obj.getClass());
+    @Override
+    public Serializer exclude(String... names)
+    {
+        builder.getSerializee().excludeAll(names);
+        return this;
+    }
 
-		if (alias == null) {
-			if (Collection.class.isInstance(obj) && (List.class.isInstance(obj))) {
-				alias = "list";
-			} else {
-				alias = extractor.nameFor(builder.getSerializee().getRootClass());
-			}
-		}
+    @Override
+    public Serializer excludeAll()
+    {
+        builder.getSerializee().excludeAll();
+        return this;
+    }
 
-		builder.setAlias(alias);
+    private void preConfigure(Object obj, String alias)
+    {
+        requireNonNull(obj, "You can't serialize null objects");
 
-		setRoot(obj);
-	}
+        builder.getSerializee().setRootClass(obj.getClass());
 
-	private void setRoot(Object obj) {
-		if (Collection.class.isInstance(obj)) {
-			builder.getSerializee().setRoot(normalizeList(obj));
-		} else {
-			builder.getSerializee().setRoot(obj);
-		}
-	}
+        if (alias == null)
+        {
+            if (Collection.class.isInstance(obj) && (List.class.isInstance(obj)))
+            {
+                alias = "list";
+            }
+            else
+            {
+                alias = extractor.nameFor(builder.getSerializee().getRootClass());
+            }
+        }
 
-	private Collection<Object> normalizeList(Object obj) {
-		Collection<Object> list = (Collection<Object>) obj;
-		builder.getSerializee().setElementTypes(findElementTypes(list));
+        builder.setAlias(alias);
 
-		return list;
-	}
+        setRoot(obj);
+    }
 
-	@Override
-	public <T> Serializer from(T object, String alias) {
-		preConfigure(object, alias);
-		return this;
-	}
+    private void setRoot(Object obj)
+    {
+        if (Collection.class.isInstance(obj))
+        {
+            builder.getSerializee().setRoot(normalizeList(obj));
+        }
+        else
+        {
+            builder.getSerializee().setRoot(obj);
+        }
+    }
 
-	@Override
-	public <T> Serializer from(T object) {
-		preConfigure(object, null);
-		return this;
-	}
+    private Collection<Object> normalizeList(Object obj)
+    {
+        Collection<Object> list = (Collection<Object>) obj;
+        builder.getSerializee().setElementTypes(findElementTypes(list));
 
-	private Set<Class<?>> findElementTypes(Collection<Object> list) {
-		Set<Class<?>> set = new HashSet<>();
-		for (Object element : list) {
-			if (element != null && !shouldSerializeField(element.getClass())) {
-				set.add(element.getClass());
-			}
-		}
-		return set;
-	}
+        return list;
+    }
 
-	@Override
-	public Serializer include(String... fields) {
-		builder.getSerializee().includeAll(fields);
-		return this;
-	}
+    @Override
+    public <T> Serializer from(T object, String alias)
+    {
+        preConfigure(object, alias);
+        return this;
+    }
 
-	@Override
-	public void serialize() {
-		builder.setExclusionStrategies(new Exclusions(builder.getSerializee(), reflectionProvider));
-		Gson gson = builder.create();
-		
-		String alias = builder.getAlias();
-		Object root = builder.getSerializee().getRoot();
+    @Override
+    public <T> Serializer from(T object)
+    {
+        preConfigure(object, null);
+        return this;
+    }
 
-		if (builder.isWithoutRoot()) {
-			gson.toJson(root, writer);
-		} else {
-			gson.toJson(singletonMap(alias, root), writer);
-		}
-		
-		flushQuietly(writer);
-	}
-	
-	@Override
-	public Serializer recursive() {
-		builder.getSerializee().setRecursive(true);
-		return this;
-	}
+    private Set<Class<?>> findElementTypes(Collection<Object> list)
+    {
+        Set<Class<?>> set = new HashSet<>();
+        for (Object element : list)
+        {
+            if (element != null && !shouldSerializeField(element.getClass()))
+            {
+                set.add(element.getClass());
+            }
+        }
+        return set;
+    }
 
-	static boolean shouldSerializeField(Class<?> type) {
-		return type.isPrimitive() || type.isEnum() || Number.class.isAssignableFrom(type) || type.equals(String.class)
-				|| Date.class.isAssignableFrom(type) || Calendar.class.isAssignableFrom(type)
-				|| Boolean.class.equals(type) || Character.class.equals(type);
-	}
+    @Override
+    public Serializer include(String... fields)
+    {
+        builder.getSerializee().includeAll(fields);
+        return this;
+    }
+
+    @Override
+    public void serialize()
+    {
+        builder.setExclusionStrategies(new Exclusions(builder.getSerializee(), reflectionProvider));
+        Gson gson = builder.create();
+
+        String alias = builder.getAlias();
+        Object root = builder.getSerializee().getRoot();
+        
+        if (builder.isWithoutRoot())
+        {
+            gson.toJson(root, writer);
+        }
+        else
+        {
+            gson.toJson(singletonMap(alias, root), writer);
+        }
+
+        flushQuietly(writer);
+    }
+
+    @Override
+    public void serialize(final AsyncContext async)
+    {
+        requireNonNull(output, "To use asynchonous serialization you need to pass true to the method " +
+                               "from(T object, boolean useAsync) or from(T object, String alias, boolean useAsync).");
+        getBuilder().setExclusionStrategies(new Exclusions(getBuilder().getSerializee(), getReflectionProvider()));
+        final Gson gson = getBuilder().create();
+        final String alias = getBuilder().getAlias();
+        final Object root = getBuilder().getSerializee().getRoot();
+
+        output.setWriteListener(new TemplateAsyncWriteListener(output, async)
+        {
+            @Override
+            public boolean isFinished() throws IOException
+            {
+                if (getBuilder().isWithoutRoot())
+                {
+                    gson.toJson(root, writer);
+                }
+                else
+                {
+                    gson.toJson(singletonMap(alias, root), writer);
+                }
+                flushQuietly(writer);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public Serializer recursive()
+    {
+        builder.getSerializee().setRecursive(true);
+        return this;
+    }
+
+    static boolean shouldSerializeField(Class<?> type)
+    {
+        return type.isPrimitive() || type.isEnum() || Number.class.isAssignableFrom(type) || type.equals(String.class)
+                || Date.class.isAssignableFrom(type) || Calendar.class.isAssignableFrom(type)
+                || Boolean.class.equals(type) || Character.class.equals(type);
+    }
+
+    @Override
+    public <T> Serializer from(T object, boolean useAsync)
+    {
+        from(object);
+        return this;
+    }
+
+    @Override
+    public <T> Serializer from(T object, String alias, boolean useAsync)
+    {
+        from(object, useAsync);
+        return this;
+    }
 }

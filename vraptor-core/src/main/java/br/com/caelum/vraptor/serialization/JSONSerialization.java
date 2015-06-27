@@ -16,6 +16,7 @@
 package br.com.caelum.vraptor.serialization;
 
 
+
 /**
  * Basic json serialization support using a Json SerializerBuilder.
  *

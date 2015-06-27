@@ -16,18 +16,21 @@
  */
 package br.com.caelum.vraptor.view;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
-import java.util.Objects;
 import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
 /**
  * Template for ReadListener
+ *
  * @author Guilherme Alves.
  */
 public abstract class TemplateAsyncReadListener implements ReadListener, VRaptorAsyncLogicExecutedListener
 {
+
     private ServletInputStream input;
     private AsyncContext async;
 
@@ -49,8 +52,7 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
 
     public TemplateAsyncReadListener setInput(ServletInputStream input)
     {
-        Objects.requireNonNull(async, "The ServletInputStream must not be null!");
-        this.input = input;
+        this.input = requireNonNull(input, "The ServletInputStream must not be null!");
         input.setReadListener(this);
         return this;
     }
@@ -62,8 +64,7 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
 
     public TemplateAsyncReadListener setAsync(AsyncContext async)
     {
-        Objects.requireNonNull(async, "The AsyncContext must not be null!");
-        this.async = async;
+        this.async = requireNonNull(async, "The AsyncContext must not be null!");
         return this;
     }
 
@@ -74,11 +75,10 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
         while (input.isReady() && !input.isFinished())
         {
             /**
-             * The method isFinished must not 
-             * execute writing logic from the output,
-             * writing logic must be executed in TemplateAsyncWriteListener
-             * or it's sub-classes.
-             * Obs.: Writing logic may block in this place.
+             * The method isFinished must not execute writing logic from the
+             * output, writing logic must be executed in
+             * TemplateAsyncWriteListener or it's sub-classes. Obs.: Writing
+             * logic may block in this place.
              */
             if (isFinished())
             {
@@ -100,8 +100,7 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
     }
 
     /**
-     * Writing logic may be puth here, 
-     * but it must be delegated to an 
+     * Writing logic may be puth here, but it must be delegated to an
      * TemplateAsyncWriteListener implementation.
      */
     public abstract void executeLogic();
