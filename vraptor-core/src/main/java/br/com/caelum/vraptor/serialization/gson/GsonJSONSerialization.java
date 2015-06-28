@@ -135,6 +135,8 @@ public class GsonJSONSerialization implements JSONSerialization
 
     /**
      * You can override this method for configuring Driver before serialization
+     * @param <T>
+     * @return NoRootSerialization
      */
     @Override
     public <T> NoRootSerialization withoutRoot()

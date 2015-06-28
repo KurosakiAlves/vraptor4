@@ -94,7 +94,7 @@ public abstract class TemplateAsyncReadListener implements ReadListener, VRaptor
             if (isFinished())
             {
                 async.complete();
-                break;
+                return;
             }
         }
 
